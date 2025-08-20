@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.oktech.boasaude.dto.CreateProductDto;
+import com.oktech.boasaude.dto.ProductResponseDto;
 import com.oktech.boasaude.entity.Product;
 import com.oktech.boasaude.entity.User;
 
@@ -22,16 +23,17 @@ import com.oktech.boasaude.entity.User;
 
 public interface ProductService {
     
-    Product createProduct(CreateProductDto createProductDto, UUID shopId, User currentUser);
+    ProductResponseDto createProduct(CreateProductDto createProductDto, UUID shopId, User currentUser);
 
     Product getProductById(UUID id);
+    ProductResponseDto getProductByIdResponse(UUID id);
 
-    Page<Product> getAllProducts(Pageable pageable);
+    Page<ProductResponseDto> getAllProducts(Pageable pageable);
 
-    Product updateProduct(UUID id, CreateProductDto product, User currentUser);
+    ProductResponseDto updateProduct(UUID id, CreateProductDto product, User currentUser);
 
     void deleteProduct(UUID id, User currentUser);
 
-    Page<Product> getProductsByShopId(UUID shopId, Pageable pageable);
+    Page<ProductResponseDto> getProductsByShopId(UUID shopId, Pageable pageable);
 
 }

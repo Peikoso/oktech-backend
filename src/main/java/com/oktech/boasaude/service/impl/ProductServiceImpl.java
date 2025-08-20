@@ -9,6 +9,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import com.oktech.boasaude.dto.CreateProductDto;
+import com.oktech.boasaude.dto.ProductResponseDto;
 import com.oktech.boasaude.entity.Product;
 import com.oktech.boasaude.entity.Shop;
 import com.oktech.boasaude.entity.User;
@@ -50,7 +51,7 @@ public class ProductServiceImpl implements ProductService {
      * @return O produto criado.
      */
     @Override
-    public Product createProduct(CreateProductDto createProductDto, UUID shopId, User currentUser) {
+    public ProductResponseDto createProduct(CreateProductDto createProductDto, UUID shopId, User currentUser) {
         if(createProductDto.price() <= 0){
             throw new IllegalArgumentException("Must be positive price.");
         }
@@ -68,9 +69,10 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = new Product(createProductDto, shop);
         
-        return productRepository.save(product);
-    }
+        product = productRepository.save(product);
 
+        return new ProductResponseDto(product);
+    }
 
     /**
      * Obtém um produto pelo seu ID.
@@ -79,8 +81,18 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public Product getProductById(UUID id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + id));
+        return productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + id));
+    }
+    /**
+     * Obtém um produto pelo seu ID e retorna um DTO de resposta.
+     * @param id ID do produto a ser obtido.
+     * @return DTO de resposta do produto encontrado.
+     */
+
+    @Override
+    public ProductResponseDto getProductByIdResponse(UUID id) {
+        Product product = getProductById(id);
+        return new ProductResponseDto(product);
     }
 
     /**
@@ -89,8 +101,10 @@ public class ProductServiceImpl implements ProductService {
      * @return Página de produtos.
      */
     @Override
-    public Page<Product> getAllProducts(Pageable pageable) {
-        return productRepository.findAll(pageable);
+    public Page<ProductResponseDto> getAllProducts(Pageable pageable) {
+        Page<Product> productsPage = productRepository.findAll(pageable);
+
+        return productsPage.map(ProductResponseDto::new);
     }
 
     /**
@@ -101,7 +115,7 @@ public class ProductServiceImpl implements ProductService {
      * @return O produto atualizado.
      */
     @Override
-    public Product updateProduct(UUID id, CreateProductDto CreateProductDto, User currentUser) {
+    public ProductResponseDto updateProduct(UUID id, CreateProductDto CreateProductDto, User currentUser) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + id));
 
@@ -123,7 +137,9 @@ public class ProductServiceImpl implements ProductService {
         product.setStock(CreateProductDto.stock());
         product.setCategory(CreateProductDto.category());
 
-        return productRepository.save(product);
+        product = productRepository.save(product);
+
+        return new ProductResponseDto(product);
     }
 
     /**
@@ -150,8 +166,10 @@ public class ProductServiceImpl implements ProductService {
      * @return Página de produtos da loja especificada.
      */
     @Override
-    public Page<Product> getProductsByShopId(UUID shopId, Pageable pageable) {
-        return productRepository.findByShopId(shopId, pageable);
+    public Page<ProductResponseDto> getProductsByShopId(UUID shopId, Pageable pageable) {
+        Page<Product> productsPage=  productRepository.findByShopId(shopId, pageable);
+
+        return productsPage.map(ProductResponseDto::new);
     }
 
 }

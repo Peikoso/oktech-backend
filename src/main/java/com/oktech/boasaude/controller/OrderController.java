@@ -26,7 +26,7 @@ import org.springframework.data.web.PageableDefault;
 
 import com.oktech.boasaude.dto.CreateOrderItemDto;
 import com.oktech.boasaude.dto.OrderResponseDto;
-import com.oktech.boasaude.entity.Order;
+
 import com.oktech.boasaude.entity.User;
 import com.oktech.boasaude.service.OrderService;
 
@@ -52,13 +52,13 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<OrderResponseDto> createOrder(
         @Valid @RequestBody @NotEmpty List<CreateOrderItemDto> createOrderDto, 
         Authentication authentication) {
         
         User currentUser = (User) authentication.getPrincipal();
-        Order order = orderService.createOrder(currentUser, createOrderDto);
+        OrderResponseDto order = orderService.createOrder(currentUser, createOrderDto);
         
         logger.info("Order created successfully for user: {}", currentUser.getId());
         
@@ -66,8 +66,7 @@ public class OrderController {
             logger.info("Order item added: Product ID: {}, Quantity: {}", item.productId(), item.quantity());
         }
 
-        OrderResponseDto responseDto = new OrderResponseDto(order);
-        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 
     @GetMapping()
@@ -77,11 +76,9 @@ public class OrderController {
         
         User currentUser = (User) authentication.getPrincipal();
 
-        Page<Order> orders = orderService.getOrdersByUserId(pageable, currentUser);
+        Page<OrderResponseDto> response = orderService.getOrdersByUserId(pageable, currentUser);
 
-        Page<OrderResponseDto> response = orders.map(OrderResponseDto::new);
-
-        logger.info("Retrieved {} orders for user: {}", orders.getTotalElements(), currentUser.getId());
+        logger.info("Retrieved {} orders for user: {}", response.getTotalElements(), currentUser.getId());
         
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -100,11 +97,11 @@ public class OrderController {
             return ResponseEntity.badRequest().build();
         }
 
-        Order updatedOrder = orderService.updateOrderStatus(orderId, status, currentUser);
+        OrderResponseDto updatedOrder = orderService.updateOrderStatus(orderId, status, currentUser);
         
         logger.info("Order status updated successfully for order ID: {}", orderId);
         
-        return new ResponseEntity<>(new OrderResponseDto(updatedOrder), HttpStatus.OK);
+        return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
     }
 
 }
