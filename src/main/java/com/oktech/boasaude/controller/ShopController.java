@@ -84,7 +84,7 @@ public class ShopController {
      * @param authentication Objeto Authentication do Spring Security.
      * @return ResponseEntity com a loja criada.
      */
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<ShopResponseDto> createShop(@Valid @RequestBody ShopCreateRequestDto shopCreateDto, Authentication authentication) {
         if (authentication == null || !(authentication.getPrincipal() instanceof User)) {
             logger.warn("User not authenticated");
