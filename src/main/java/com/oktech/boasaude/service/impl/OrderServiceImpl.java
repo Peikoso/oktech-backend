@@ -14,6 +14,7 @@ import com.oktech.boasaude.entity.User;
 import com.oktech.boasaude.repository.OrderRepository;
 import com.oktech.boasaude.service.OrderService;
 import com.oktech.boasaude.dto.CreateOrderItemDto;
+import com.oktech.boasaude.dto.OrderResponseDto;
 
 /**
  * Implementação do serviço de pedidos.
@@ -41,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
      * @return O pedido criado com os itens associados.
     */
     @Override
-    public Order createOrder(User currentUser, List<CreateOrderItemDto> orderItems) {
+    public OrderResponseDto createOrder(User currentUser, List<CreateOrderItemDto> orderItems) {
         Order order = new Order(currentUser);
 
         orderRepository.save(order);
@@ -51,11 +52,13 @@ public class OrderServiceImpl implements OrderService {
             order.getItems().add(orderItem);
         }
 
-        return orderRepository.save(order);  
+        order = orderRepository.save(order);
+        
+        return new OrderResponseDto(order);
     }
 
     @Override
-    public Order updateOrderStatus(UUID orderId, String status, User currentUser) {
+    public OrderResponseDto updateOrderStatus(UUID orderId, String status, User currentUser) {
         Order order = orderRepository.findById(orderId)
             .orElseThrow(() -> new IllegalArgumentException("Order not found with ID: " + orderId));
 
@@ -75,11 +78,13 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.updateStatus(statusEnum);
-        return orderRepository.save(order);
+        order = orderRepository.save(order);
+
+        return new OrderResponseDto(order); // Retorna a resposta com os dados do pedido atualizado
     }
 
     @Override
-    public Order getOrderById(UUID orderId, User currentUser) {
+    public OrderResponseDto getOrderById(UUID orderId, User currentUser) {
         Order order = orderRepository.findById(orderId)
             .orElseThrow(() -> new IllegalArgumentException("Order not found with ID: " + orderId));
 
@@ -87,16 +92,18 @@ public class OrderServiceImpl implements OrderService {
             throw new IllegalArgumentException("You do not have permission to view this order.");
         }
 
-        return order;
+        return new OrderResponseDto(order); // Retorna a resposta com os dados do pedido
     }
 
     @Override
-    public Page<Order> getOrdersByUserId(Pageable pageable, User currentUser) {
+    public Page<OrderResponseDto> getOrdersByUserId(Pageable pageable, User currentUser) {
         Page<Order> orders = orderRepository.findByUserId(currentUser.getId(), pageable);
         if (orders.isEmpty()) {
             throw new IllegalArgumentException("No orders found for user with ID: " + currentUser.getId());
         }
-        return orders;
+        Page<OrderResponseDto> response = orders.map(OrderResponseDto::new);
+
+        return response; // Retorna a página de pedidos do usuário
     }
 
     @Override
