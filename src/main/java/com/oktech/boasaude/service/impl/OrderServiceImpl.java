@@ -21,6 +21,11 @@ import com.oktech.boasaude.dto.OrderResponseDto;
  * Fornece métodos para criar, atualizar, obter e excluir pedidos.
  * @author João Martins
  * @version 1.0
+ * @author Lucas Ouro
+ * @version 1.1
+ * Mudança do metodo de listagem de pedidos trazendo pedidos por usuário
+ * e ordenando por data de criação mais recente.
+ * @see OrderService
  */
 
 @Service
@@ -97,7 +102,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Page<OrderResponseDto> getOrdersByUserId(Pageable pageable, User currentUser) {
-        Page<Order> orders = orderRepository.findByUserId(currentUser.getId(), pageable);
+        Page<Order> orders = orderRepository.findByUserIdOrderByCreatedAtDesc(currentUser.getId(), pageable);
         if (orders.isEmpty()) {
             throw new IllegalArgumentException("No orders found for user with ID: " + currentUser.getId());
         }
