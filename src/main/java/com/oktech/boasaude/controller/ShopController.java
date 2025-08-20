@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.oktech.boasaude.dto.ProductResponseDto;
 import com.oktech.boasaude.dto.ShopCreateRequestDto;
 import com.oktech.boasaude.dto.ShopResponseDto;
-import com.oktech.boasaude.entity.Product;
 import com.oktech.boasaude.entity.User;
 import com.oktech.boasaude.service.ShopService; 
 import com.oktech.boasaude.service.ProductService;
@@ -73,11 +72,10 @@ public class ShopController {
         
         logger.info("Fetching products for shop ID: {}", shopId);
 
-        Page<Product> productsPage = productService.getProductsByShopId(shopId, pageable);
+        Page<ProductResponseDto> productsPage = productService.getProductsByShopId(shopId, pageable);
 
-        Page<ProductResponseDto> responseDtoPage = productsPage.map(ProductResponseDto::new);
 
-        return ResponseEntity.ok(responseDtoPage);
+        return ResponseEntity.ok(productsPage);
     }
 
     /**
