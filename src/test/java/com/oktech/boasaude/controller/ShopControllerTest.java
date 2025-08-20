@@ -29,6 +29,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Testes unitários para o ShopController.
+ * Utiliza MockMvc para simular requisições HTTP e verificar respostas.
+ * 
+ * @author Lucas do Ouro
+ * @version 1.0
+ */
+
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
