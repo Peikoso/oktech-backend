@@ -39,6 +39,12 @@ import lombok.Setter;
  * 
  * @author Arlindo Neto
  * @version 1.0
+ * @author Lucas Ouro
+ * @version 1.1
+ * Create a list of addresses associated with the user.
+ * 
+ * @see CreateUserDto
+ * @see UserDetails
  */
 
 @Entity(name = "User")
@@ -73,7 +79,7 @@ public class User implements UserDetails {
     private String phone; // Phone number of the user
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL , orphanRemoval = true)
-    private List<String> addresses = new ArrayList<>(); // List of addresses associated with the user
+    private List<Address> addresses = new ArrayList<>(); // List of addresses associated with the user
 
     private boolean isActive; // Indicates if the user account is active
     // Timestamps for creation and last update
