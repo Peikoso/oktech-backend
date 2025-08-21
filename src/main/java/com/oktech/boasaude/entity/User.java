@@ -1,6 +1,7 @@
 package com.oktech.boasaude.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -14,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.oktech.boasaude.dto.CreateUserDto;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
@@ -21,6 +23,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -68,6 +71,9 @@ public class User implements UserDetails {
     private UserRole role; // Possible values: USER, ADMIN, PRODUCTOR
 
     private String phone; // Phone number of the user
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<String> addresses = new ArrayList<>(); // List of addresses associated with the user
 
     private boolean isActive; // Indicates if the user account is active
     // Timestamps for creation and last update
