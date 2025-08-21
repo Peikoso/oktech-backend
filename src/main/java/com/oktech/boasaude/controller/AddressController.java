@@ -26,13 +26,12 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/v1/addresses") // Ajustado para seguir o padrão de versionamento
+@RequestMapping("/v1/addresses") 
 public class AddressController {
 
     private final AddressService addressService;
     private static final Logger logger = LoggerFactory.getLogger(AddressController.class);
 
-    // Injeção de dependência via construtor, como no modelo
     public AddressController(AddressService addressService) {
         this.addressService = addressService;
     }
@@ -97,7 +96,7 @@ public class AddressController {
 
         } catch (Exception e) {
             logger.error("Erro ao buscar endereço com ID {}: {}", addressId, e.getMessage(), e);
-            // Poderia retornar NOT_FOUND para exceções específicas
+            
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
