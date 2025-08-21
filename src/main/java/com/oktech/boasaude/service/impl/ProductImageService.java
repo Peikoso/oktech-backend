@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,9 +25,15 @@ import com.oktech.boasaude.repository.ProductRepository;
 public class ProductImageService {
 
     private static final int MAX_IMAGES_PER_PRODUCT = 5;
+    List<String> ALLOWED_IMAGE_EXTENSIONS = List.of(".jpg", ".jpeg", ".png", ".gif");
+
+
+    private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     
     @Value("${storage.path:uploads/images}")
     private String storagePath;
+
+    
     
     private final ProductImageRepository productImageRepository;
     private final ProductRepository productRepository;
@@ -59,6 +67,22 @@ public class ProductImageService {
         if (files.isEmpty() || files.stream().allMatch(MultipartFile::isEmpty)) {
             throw new RuntimeException("At least one valid image file is required");
         }
+
+        for (MultipartFile file : files) {
+            String fileName = file.getOriginalFilename();
+
+            if (fileName == null || fileName.isEmpty()) {
+                throw new RuntimeException("File name cannot be empty");
+            }
+
+            String extension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+
+            if (!ALLOWED_IMAGE_EXTENSIONS.contains(extension)) {
+                logger.error("Invalid file type: {}", extension);
+                throw new RuntimeException("Invalid file type: " + extension + ". Allowed types: " + String.join(", ", ALLOWED_IMAGE_EXTENSIONS));
+            }
+        }
+
     }
 
     private Product findProductById(UUID productId) {
