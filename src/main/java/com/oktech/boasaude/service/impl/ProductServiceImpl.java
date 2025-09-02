@@ -96,13 +96,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     * Obtém todos os produtos com paginação.
+     * Obtém todos os produtos com paginação podendo ser filtrado por category.
      * @param pageable Objeto Pageable para paginação.
      * @return Página de produtos.
      */
     @Override
-    public Page<ProductResponseDto> getAllProducts(Pageable pageable) {
-        Page<Product> productsPage = productRepository.findAll(pageable);
+    public Page<ProductResponseDto> getAllProducts(Pageable pageable, String category) {
+        Page<Product> productsPage;
+        if (category != null && !category.isEmpty()) {
+            productsPage = productRepository.findByCategory(category, pageable);
+        } else {
+            productsPage = productRepository.findAll(pageable);
+        }
 
         return productsPage.map(ProductResponseDto::new);
     }

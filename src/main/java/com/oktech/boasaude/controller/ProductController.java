@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.security.core.Authentication;
@@ -82,9 +83,10 @@ public class ProductController {
 
     @GetMapping("")
     public ResponseEntity<Page<ProductResponseDto>> getAllProducts(
-        @ParameterObject @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        
-        Page<ProductResponseDto> productsPage = productService.getAllProducts(pageable);
+        @ParameterObject @PageableDefault(page = 0, size = 10) Pageable pageable,
+        @RequestParam(required = false) String category) {
+
+        Page<ProductResponseDto> productsPage = productService.getAllProducts(pageable, category);
 
         logger.info("Products retrieved successfully, count: {}", productsPage.getTotalElements());
         return ResponseEntity.ok(productsPage);
