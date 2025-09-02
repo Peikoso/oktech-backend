@@ -7,6 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import java.util.List;
+
+import java.util.Arrays;
 
 import com.oktech.boasaude.dto.CreateProductDto;
 import com.oktech.boasaude.dto.ProductResponseDto;
@@ -15,6 +18,7 @@ import com.oktech.boasaude.entity.Shop;
 import com.oktech.boasaude.entity.User;
 import com.oktech.boasaude.repository.ProductRepository;
 import com.oktech.boasaude.service.ProductService;
+
 
 /**
  * ProductServiceImpl é a implementação do serviço de produtos.
@@ -43,6 +47,17 @@ public class ProductServiceImpl implements ProductService {
         this.shopServiceImpl = shopServiceImpl;
     }
 
+    //========================LISTA FIXA DE CATEGORIAS========================
+    private static final List<String> CATEGORIES = Arrays.asList(
+        "Folhas", 
+        "Raizes", 
+        "Tuberculos", 
+        "Caules", 
+        "Bulbos",
+        "Sementes",
+        "Frutos"
+        );
+
     /**
      * Cria um novo produto com os dados fornecidos e associa-o a uma loja.
      * @param createProductDto DTO com os dados do produto a ser criado.
@@ -52,6 +67,16 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public ProductResponseDto createProduct(CreateProductDto createProductDto, UUID shopId, User currentUser) {
+
+        String category = createProductDto.category();
+        boolean isCategoryValid = CATEGORIES.stream()
+                .anyMatch(validCategory -> validCategory.equalsIgnoreCase(category));
+
+        if (!isCategoryValid) {
+            throw new IllegalArgumentException("Invalid category. Valid categories are: " + CATEGORIES);
+            
+        }
+
         if(createProductDto.price() <= 0){
             throw new IllegalArgumentException("Must be positive price.");
         }
@@ -94,6 +119,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = getProductById(id);
         return new ProductResponseDto(product);
     }
+
 
     /**
      * Obtém todos os produtos com paginação podendo ser filtrado por category.
