@@ -25,9 +25,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 
 import com.oktech.boasaude.dto.CreateOrderItemDto;
+import com.oktech.boasaude.dto.OrderItemResponseDto;
 import com.oktech.boasaude.dto.OrderResponseDto;
 
 import com.oktech.boasaude.entity.User;
+import com.oktech.boasaude.service.OrderItemService;
 import com.oktech.boasaude.service.OrderService;
 
 /**
@@ -46,10 +48,13 @@ import com.oktech.boasaude.service.OrderService;
 public class OrderController {
     private final OrderService orderService;
 
+    private final OrderItemService orderItemService;
+
     private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
     
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, OrderItemService orderItemService) {
         this.orderService = orderService;
+        this.orderItemService = orderItemService;
     }
 
     @PostMapping()
@@ -102,6 +107,19 @@ public class OrderController {
         logger.info("Order status updated successfully for order ID: {}", orderId);
         
         return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
+    }
+
+    @GetMapping("/items/sold")
+    public ResponseEntity<List<OrderItemResponseDto>> getSoldItems(Authentication authentication) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof User)) {
+            logger.warn("User not authenticated");
+            return ResponseEntity.status(401).build();
+        }
+
+        User currentUser = (User) authentication.getPrincipal();
+        List<OrderItemResponseDto> soldItems = orderItemService.getSoldItems(currentUser);
+        logger.info("Sold items retrieved successfully for user ID: {}", currentUser.getId());
+        return ResponseEntity.ok(soldItems);
     }
 
 }

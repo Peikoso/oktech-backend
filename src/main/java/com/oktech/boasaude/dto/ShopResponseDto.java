@@ -26,4 +26,9 @@ public record ShopResponseDto(
         this(shop.getId(), shop.getName(), shop.getDescription(), shop.getCnpj());
     }
 
+    public Shop orElseThrow(Object object) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
+    }
+
 }

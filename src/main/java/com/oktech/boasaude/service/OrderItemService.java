@@ -3,8 +3,10 @@ package com.oktech.boasaude.service;
 import java.util.List;
 import java.util.UUID;
 
+import com.oktech.boasaude.dto.OrderItemResponseDto;
 import com.oktech.boasaude.entity.Order;
 import com.oktech.boasaude.entity.OrderItem;
+import com.oktech.boasaude.entity.User;
 
 /**
  * Interface for managing order items in the application.
@@ -25,5 +27,6 @@ public interface OrderItemService {
     void deleteOrderItem(UUID orderItemId);
 
     List<OrderItem> getOrderItemsByOrderId(UUID orderId);
-    
+
+    List<OrderItemResponseDto> getSoldItems(User user);
 }

@@ -5,11 +5,17 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.oktech.boasaude.dto.OrderItemResponseDto;
+import com.oktech.boasaude.dto.ShopResponseDto;
 import com.oktech.boasaude.entity.Order;
 import com.oktech.boasaude.entity.OrderItem;
+import com.oktech.boasaude.entity.OrderStatus;
 import com.oktech.boasaude.entity.Product;
+import com.oktech.boasaude.entity.User;
 import com.oktech.boasaude.repository.OrderItemRepository;
 import com.oktech.boasaude.service.OrderItemService;
+import com.oktech.boasaude.service.ProductService;
+import com.oktech.boasaude.service.ShopService;
 
 /**
  * Implementação do serviço de itens de pedido.
@@ -23,11 +29,14 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     private final OrderItemRepository orderItemRepository;
     
-    private final ProductServiceImpl productServiceImpl;
+    private final ProductService productService;
 
-    public OrderItemServiceImpl(OrderItemRepository orderItemRepository, ProductServiceImpl productServiceImpl) {
+    private final ShopService shopService;
+
+    public OrderItemServiceImpl(OrderItemRepository orderItemRepository, ProductService productService, ShopService shopService) {
         this.orderItemRepository = orderItemRepository;
-        this.productServiceImpl = productServiceImpl;
+        this.productService = productService;
+        this.shopService = shopService;
     }
 
     /**
@@ -43,7 +52,7 @@ public class OrderItemServiceImpl implements OrderItemService {
             throw new IllegalArgumentException("Quantity must be greater than zero.");
         }
 
-        Product product = productServiceImpl.getProductById(productId);
+        Product product = productService.getProductById(productId);
 
         OrderItem orderItem = new OrderItem(order, product, quantity);
 
@@ -73,5 +82,16 @@ public class OrderItemServiceImpl implements OrderItemService {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deleteOrderItem'");
     }
-    
+
+    @Override
+    public List<OrderItemResponseDto> getSoldItems(User user) {
+        ShopResponseDto shop = shopService.getShopbyuser(user);
+            
+        List<OrderItem> items = orderItemRepository.findByOrder_StatusAndProduct_Shop_Id(OrderStatus.COMPLETED, shop.id());
+
+        return items.stream()
+                .map(OrderItemResponseDto::new)
+                .toList();  
+    }
+
 }

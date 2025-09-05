@@ -1,7 +1,9 @@
 package com.oktech.boasaude.service.impl;
 
+
 import com.oktech.boasaude.dto.ShopCreateRequestDto;
 import com.oktech.boasaude.dto.ShopResponseDto;
+
 import com.oktech.boasaude.entity.Shop;
 import com.oktech.boasaude.entity.User;
 import com.oktech.boasaude.entity.UserRole;
@@ -11,6 +13,7 @@ import com.oktech.boasaude.service.ShopService;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+
 
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -39,6 +42,7 @@ public class ShopServiceImpl implements ShopService {
     private ShopRepository shopRepository;
 
     private UserServiceImpl userService;
+    
 
     private static final String CNPJ_REGEX = "^(\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}|\\d{14})$"; // Formato
                                                                                                    // XX.XXX.XXX/XXXX-XX
@@ -48,6 +52,7 @@ public class ShopServiceImpl implements ShopService {
     public ShopServiceImpl(ShopRepository shopRepository, UserServiceImpl userService) {
         this.shopRepository = shopRepository;
         this.userService = userService;
+
     }
 
     @Override
@@ -144,6 +149,5 @@ public class ShopServiceImpl implements ShopService {
 
         return new ShopResponseDto(shop);
     }
-
 
 }
