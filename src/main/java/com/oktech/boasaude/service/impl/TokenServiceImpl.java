@@ -41,6 +41,10 @@ public class TokenServiceImpl implements TokenService {
                 throw new IllegalArgumentException("User not found with email: " + email);
             }
 
+            if (!user.isEnabled()) {
+                throw new IllegalArgumentException("User is not enabled");
+            }
+
             var userId = user.getId();
 
             String token = JWT.create()

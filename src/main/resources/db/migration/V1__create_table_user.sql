@@ -8,7 +8,7 @@ CREATE TABLE users (
     provider_id VARCHAR(255),           -- ID do provedor externo (pode ser nulo)
     role VARCHAR(20) NOT NULL,          -- USER, ADMIN, PRODUCTOR
     phone VARCHAR(20),
-    is_active BOOLEAN DEFAULT TRUE,
+    isactive BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

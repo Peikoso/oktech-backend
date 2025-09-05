@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
         logger.info("Deleting user with ID: {}", id);
         if (existingUser != null) {
             logger.info("User found for ID: {}", id);
-            existingUser.setActive(false); // Soft delete
+            existingUser.setEnabled(false); // Soft delete
             userRepository.save(existingUser);
         } else {
             logger.error("User not found for ID: {}", id);

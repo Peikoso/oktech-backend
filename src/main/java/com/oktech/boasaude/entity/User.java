@@ -81,7 +81,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>(); // List of addresses associated with the user
 
-    private boolean isActive; // Indicates if the user account is active
+    private boolean isactive; // Indicates if the user account is active
     // Timestamps for creation and last update
     @CreatedDate
     private LocalDateTime createdAt;
@@ -99,7 +99,7 @@ public class User implements UserDetails {
         this.phone = createUserDto.phone();
         this.authProvider = AuthProvider.LOCAL; // Default to local authentication
         this.role = UserRole.USER; // Default role is USER
-        this.isActive = true; // New users are active by default
+        this.isactive = true; // New users are active by default
 
     }
 
@@ -137,6 +137,10 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return isActive;
+        return isactive;
+    }
+
+    public void setEnabled(boolean isactive) {
+        this.isactive = isactive;
     }
 }
