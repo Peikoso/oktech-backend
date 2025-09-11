@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.oktech.boasaude.entity.Product;
 import com.oktech.boasaude.entity.ProductImage;
+import com.oktech.boasaude.entity.User;
 import com.oktech.boasaude.repository.ProductImageRepository;
 import com.oktech.boasaude.repository.ProductRepository;
 
@@ -184,5 +185,16 @@ public class ProductImageService {
      */
     public long countImagesByProductId(UUID productId) {
         return productImageRepository.findByProductId(productId).size();
+    }
+
+    public void deleteImage(UUID productImageId, User user) {
+        try {
+            ProductImage productImage = productImageRepository.findByIdAndOwner(productImageId, user.getId())
+                    .orElseThrow(() -> new RuntimeException("Image not found"));
+            productImageRepository.delete(productImage);
+            Files.deleteIfExists(Paths.get(productImage.getImageUrl()));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to delete image file: " + productImageId, e);
+        }
     }
 }
