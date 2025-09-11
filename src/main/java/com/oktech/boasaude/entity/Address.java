@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "addresses")
+@Table(name = "address")
 @Getter
 @Setter
 @NoArgsConstructor // Necessário para o JPA

@@ -20,7 +20,7 @@ import java.util.UUID;
  */
 
 public interface OrderService {
-    OrderResponseDto createOrder(User currentUser, List<CreateOrderItemDto> orderItems); // Cria um novo pedido associado ao usuário);
+    OrderResponseDto createOrder(User currentUser, UUID addressId, List<CreateOrderItemDto> orderItems); // Cria um novo pedido associado ao usuário
 
     OrderResponseDto updateOrderStatus(UUID orderId, String status, User currentUser); // Atualiza o status de um pedido
 

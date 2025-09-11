@@ -10,12 +10,15 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -53,6 +56,13 @@ public class OrderItem {
 
     private Integer quantity;
 
+    @Enumerated(EnumType.STRING)
+    private OrderDeliveryStatus deliveryStatus;;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address address;
+
     // Timestamps for creation and last update
     @CreatedDate
     private LocalDateTime createdAt;
@@ -71,10 +81,12 @@ public class OrderItem {
         return BigInteger.valueOf(product.getPrice().intValue() * quantity);
     }
 
-    public OrderItem(Order order, Product product, Integer quantity) {
+    public OrderItem(Order order, Product product, Integer quantity, Address address) {
         this.order = order;
         this.product = product;
         this.quantity = quantity;
+        this.deliveryStatus = OrderDeliveryStatus.PENDING;
+        this.address = address;
     }
     
 }

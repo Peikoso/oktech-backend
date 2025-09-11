@@ -39,6 +39,12 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    public Address getAddressEntityById(UUID addressId, User currentUser) {
+        Address address = findAddressAndCheckOwnership(addressId, currentUser);
+        return address;
+    }
+
+    @Override
     public List<AddressResponseDto> getAddressesByUser(User currentUser) {
         return addressRepository.findByUser_Id(currentUser.getId()).stream()
                 .map(AddressResponseDto::new) // Converte cada Address para AddressResponseDto

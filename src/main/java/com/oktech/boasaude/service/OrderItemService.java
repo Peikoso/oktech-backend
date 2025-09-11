@@ -20,13 +20,11 @@ import com.oktech.boasaude.entity.User;
 
 public interface OrderItemService {
 
-    OrderItem addOrderItem(Order order, UUID productId, int quantity);
-
-    OrderItem updateOrderItem(UUID orderItemId, int quantity);
-
-    void deleteOrderItem(UUID orderItemId);
+    OrderItem addOrderItem(Order order, UUID productId, int quantity, UUID addressId, User currentUser);
 
     List<OrderItem> getOrderItemsByOrderId(UUID orderId);
 
     List<OrderItemResponseDto> getSoldItems(User user);
+
+    OrderItemResponseDto updateDeliveryStatus(UUID orderItemId, User currentUser, String status);
 }

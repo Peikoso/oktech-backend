@@ -10,7 +10,9 @@ public record OrderItemResponseDto(
     UUID productId,
     String productName,
     int quantity,
-    BigInteger totalPrice
+    BigInteger totalPrice,
+    String deliveryStatus,
+    String addressId
 ) {
     public OrderItemResponseDto(OrderItem item) {
         this(
@@ -18,7 +20,9 @@ public record OrderItemResponseDto(
             item.getProduct().getId(),
             item.getProduct().getName(),
             item.getQuantity(),
-            item.getTotalPrice()
+            item.getTotalPrice(),
+            item.getDeliveryStatus().getStatus(),
+            item.getAddress().getId().toString()
         );
     }
 }
