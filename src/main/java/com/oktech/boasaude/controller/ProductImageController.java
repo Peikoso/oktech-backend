@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,22 +32,6 @@ public class ProductImageController {
 
     public ProductImageController(ProductImageService productImageService) {
         this.productImageService = productImageService;
-    }
-
-    @PostMapping("/upload")
-    @Operation(summary = "Upload de imagem(s) para produto", description = "Faz upload de uma ou múltiplas imagens (máximo 5) e as associa a um produto específico")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Imagem(s) criada(s) com sucesso"),
-        @ApiResponse(responseCode = "400", description = "Dados inválidos, limite excedido ou arquivos vazios"),
-        @ApiResponse(responseCode = "404", description = "Produto não encontrado")
-    })
-    public ResponseEntity<ProductImageUploadResponseDto> uploadImages(
-            @Parameter(description = "Arquivo(s) de imagem (máximo 5)", required = true)
-            @RequestParam("files") List<MultipartFile> files,
-            @Parameter(description = "ID do produto", required = true)
-            @RequestParam("productId") UUID productId) {
-        
-        return handleImageUpload(files, productId);
     }
 
     @PostMapping(value = "/upload-form", consumes = "multipart/form-data")

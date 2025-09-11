@@ -39,6 +39,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "v1/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/product-imagens/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
                         .requestMatchers(
                             "/v1/auth/**", 
                             "/actuator/**", 
