@@ -47,13 +47,13 @@ public class OrderServiceImpl implements OrderService {
      * @return O pedido criado com os itens associados.
     */
     @Override
-    public OrderResponseDto createOrder(User currentUser, List<CreateOrderItemDto> orderItems) {
+    public OrderResponseDto createOrder(User currentUser, UUID addressId, List<CreateOrderItemDto> orderItems) {
         Order order = new Order(currentUser);
 
         orderRepository.save(order);
         
         for (CreateOrderItemDto itemDto : orderItems) {
-            OrderItem orderItem = orderItemServiceImpl.addOrderItem(order, itemDto.productId(), itemDto.quantity());
+            OrderItem orderItem = orderItemServiceImpl.addOrderItem(order, itemDto.productId(), itemDto.quantity(), addressId, currentUser);
             order.getItems().add(orderItem);
         }
 

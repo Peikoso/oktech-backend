@@ -2,6 +2,7 @@ package com.oktech.boasaude.service;
 
 import com.oktech.boasaude.dto.AddressCreateRequestDto;
 import com.oktech.boasaude.dto.AddressResponseDto;
+import com.oktech.boasaude.entity.Address;
 import com.oktech.boasaude.entity.User;
 import java.util.List;
 import java.util.UUID;
@@ -17,10 +18,11 @@ import java.util.UUID;
 
 public interface AddressService {
 
-    
     AddressResponseDto createAddress(AddressCreateRequestDto createDto, User currentUser);
 
     AddressResponseDto getAddressById(UUID addressId, User currentUser);
+
+    Address getAddressEntityById(UUID addressId, User currentUser);
 
     List<AddressResponseDto> getAddressesByUser(User currentUser);
 

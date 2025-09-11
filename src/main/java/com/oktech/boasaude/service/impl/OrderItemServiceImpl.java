@@ -7,12 +7,15 @@ import org.springframework.stereotype.Service;
 
 import com.oktech.boasaude.dto.OrderItemResponseDto;
 import com.oktech.boasaude.dto.ShopResponseDto;
+import com.oktech.boasaude.entity.Address;
 import com.oktech.boasaude.entity.Order;
+import com.oktech.boasaude.entity.OrderDeliveryStatus;
 import com.oktech.boasaude.entity.OrderItem;
 import com.oktech.boasaude.entity.OrderStatus;
 import com.oktech.boasaude.entity.Product;
 import com.oktech.boasaude.entity.User;
 import com.oktech.boasaude.repository.OrderItemRepository;
+import com.oktech.boasaude.service.AddressService;
 import com.oktech.boasaude.service.OrderItemService;
 import com.oktech.boasaude.service.ProductService;
 import com.oktech.boasaude.service.ShopService;
@@ -33,10 +36,13 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     private final ShopService shopService;
 
-    public OrderItemServiceImpl(OrderItemRepository orderItemRepository, ProductService productService, ShopService shopService) {
+    private final AddressService addressService;
+
+    public OrderItemServiceImpl(OrderItemRepository orderItemRepository, ProductService productService, ShopService shopService, AddressService addressService) {
         this.orderItemRepository = orderItemRepository;
         this.productService = productService;
         this.shopService = shopService;
+        this.addressService = addressService;
     }
 
     /**
@@ -47,14 +53,16 @@ public class OrderItemServiceImpl implements OrderItemService {
      * @return O item de pedido criado e salvo.
      */
     @Override
-    public OrderItem addOrderItem(Order order, UUID productId, int quantity) {
+    public OrderItem addOrderItem(Order order, UUID productId, int quantity, UUID addressId, User currentUser) {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than zero.");
         }
 
         Product product = productService.getProductById(productId);
 
-        OrderItem orderItem = new OrderItem(order, product, quantity);
+        Address address = addressService.getAddressEntityById(addressId, currentUser);
+
+        OrderItem orderItem = new OrderItem(order, product, quantity, address);
 
         return orderItemRepository.save(orderItem);
     }
@@ -71,27 +79,34 @@ public class OrderItemServiceImpl implements OrderItemService {
         return orderItems;
     }
 
-    @Override
-    public OrderItem updateOrderItem(UUID orderItemId, int quantity) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateOrderItem'");
-    }
-
-    @Override
-    public void deleteOrderItem(UUID orderItemId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteOrderItem'");
-    }
 
     @Override
     public List<OrderItemResponseDto> getSoldItems(User user) {
         ShopResponseDto shop = shopService.getShopbyuser(user);
             
-        List<OrderItem> items = orderItemRepository.findByOrder_StatusAndProduct_Shop_Id(OrderStatus.COMPLETED, shop.id());
+        List<OrderItem> items = orderItemRepository.findByOrder_StatusAndProduct_Shop_IdOrderByCreatedAtDesc(OrderStatus.COMPLETED, shop.id());
 
         return items.stream()
                 .map(OrderItemResponseDto::new)
                 .toList();  
+    }
+
+    @Override
+    public OrderItemResponseDto updateDeliveryStatus(UUID orderItemId, User currentUser, String status) {
+
+        OrderItem item = orderItemRepository.findByIdAndProduct_Shop_Owner_Id(orderItemId, currentUser.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Order item not found"));
+
+        OrderDeliveryStatus statusEnum;
+        try {
+            statusEnum = OrderDeliveryStatus.valueOf(status.toUpperCase()); // Usa toUpperCase para garantir que combine
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid status value: " + status);
+        }
+        item.setDeliveryStatus(statusEnum);
+        orderItemRepository.save(item);
+
+        return new OrderItemResponseDto(item);
     }
 
 }
