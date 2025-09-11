@@ -22,4 +22,15 @@ public interface ProductImageRepository extends JpaRepository<ProductImage, UUID
     Optional<ProductImage> findByIdAndOwner(@Param("imageId") UUID imageId,
                                             @Param("userId") UUID userId);
 
+   
+
+    @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END " +
+           "FROM Product p " +
+           "WHERE p.id = :productId AND p.shop.owner.id = :userId")
+    boolean existsByIdAndOwner(@Param("productId") UUID productId,
+                               @Param("userId") UUID userId);
+                               
 }
+
+
+

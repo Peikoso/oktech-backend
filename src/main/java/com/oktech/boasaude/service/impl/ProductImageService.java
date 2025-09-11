@@ -51,9 +51,13 @@ public class ProductImageService {
      * @return Lista das imagens salvas
      * @throws RuntimeException se o produto não for encontrado, se exceder o limite ou se ocorrer erro ao salvar
      */
-    public List<ProductImage> saveFilesWithProduct(List<MultipartFile> files, UUID productId) {
+    public List<ProductImage> saveFilesWithProduct(List<MultipartFile> files, UUID productId, User user) {
         validateFiles(files);
-        
+        boolean isOwner = productImageRepository.existsByIdAndOwner(productId, user.getId());
+        if (!isOwner) {
+            logger.error("User {} attempted to add images to product {} without ownership", user.getId(), productId);
+            throw new RuntimeException("Usuário não é dono do produto");
+        }
         Product product = findProductById(productId);
         validateImageLimit(productId, files.size());
         

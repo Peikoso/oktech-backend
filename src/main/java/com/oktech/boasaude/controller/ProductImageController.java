@@ -47,8 +47,9 @@ public class ProductImageController {
             @Parameter(description = "Arquivo(s) de imagem (máximo 5)", required = true)
             @RequestPart("files") List<MultipartFile> files,
             @Parameter(description = "ID do produto", required = true)
-            @RequestPart("productId") String productIdStr) {
-        
+            @RequestPart("productId") String productIdStr,
+            Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
         // Validar entrada
         if (files.isEmpty() || files.stream().allMatch(MultipartFile::isEmpty)) {
             return ResponseEntity.badRequest().build();
@@ -61,12 +62,12 @@ public class ProductImageController {
             return ResponseEntity.badRequest().build();
         }
 
-        return handleImageUpload(files, productId);
+        return handleImageUpload(files, productId, user);
     }
 
-    private ResponseEntity<ProductImageUploadResponseDto> handleImageUpload(List<MultipartFile> files, UUID productId) {
+    private ResponseEntity<ProductImageUploadResponseDto> handleImageUpload(List<MultipartFile> files, UUID productId, User user) {
         try {
-            List<ProductImage> savedImages = productImageService.saveFilesWithProduct(files, productId);
+            List<ProductImage> savedImages = productImageService.saveFilesWithProduct(files, productId, user);
             List<ProductImageResponseDto> responseDtos = savedImages.stream()
                     .map(ProductImageResponseDto::fromEntity)
                     .toList();
