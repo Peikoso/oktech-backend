@@ -101,10 +101,14 @@ public class ProductServiceImpl implements ProductService {
      * @return Página de produtos.
      */
     @Override
-    public Page<ProductResponseDto> getAllProducts(Pageable pageable, String category) {
+    public Page<ProductResponseDto> getAllProducts(Pageable pageable, String category, String name) {
         Page<Product> productsPage;
-        if (category != null && !category.isEmpty()) {
+        if (category != null && !category.isEmpty() && name != null && !name.isEmpty()) {
+            productsPage = productRepository.findByCategoryAndNameContainingIgnoreCase(category, name, pageable);
+        } else if (category != null && !category.isEmpty()) {
             productsPage = productRepository.findByCategory(category, pageable);
+        } else if (name != null && !name.isEmpty()) {
+            productsPage = productRepository.findByNameContainingIgnoreCase(name, pageable);
         } else {
             productsPage = productRepository.findAll(pageable);
         }

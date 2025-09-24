@@ -84,9 +84,10 @@ public class ProductController {
     @GetMapping("")
     public ResponseEntity<Page<ProductResponseDto>> getAllProducts(
         @ParameterObject @PageableDefault(page = 0, size = 10) Pageable pageable,
-        @RequestParam(required = false) String category) {
+        @RequestParam(required = false) String category,
+        @RequestParam(required = false) String name) {
 
-        Page<ProductResponseDto> productsPage = productService.getAllProducts(pageable, category);
+        Page<ProductResponseDto> productsPage = productService.getAllProducts(pageable, category, name);
 
         logger.info("Products retrieved successfully, count: {}", productsPage.getTotalElements());
         return ResponseEntity.ok(productsPage);
