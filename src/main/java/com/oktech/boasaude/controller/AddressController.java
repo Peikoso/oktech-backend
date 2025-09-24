@@ -80,16 +80,10 @@ public class AddressController {
 
     @GetMapping("/{addressId}")
     public ResponseEntity<AddressResponseDto> getAddressById(
-            @PathVariable UUID addressId,
-            Authentication authentication) {
+            @PathVariable UUID addressId) {
         try {
-            if (authentication == null || !(authentication.getPrincipal() instanceof User)) {
-                logger.warn("Tentativa de buscar endereço por ID por usuário não autenticado.");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-            User currentUser = (User) authentication.getPrincipal();
-
-            AddressResponseDto address = addressService.getAddressById(addressId, currentUser);
+            // Note que aqui não precisamos do usuário autenticado, pois a busca é pública
+            AddressResponseDto address = addressService.getAddressById(addressId);
             
             logger.info("Endereço com ID {} recuperado com sucesso.", addressId);
             return ResponseEntity.ok(address);

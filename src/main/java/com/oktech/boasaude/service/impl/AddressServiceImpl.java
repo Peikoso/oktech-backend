@@ -33,8 +33,9 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public AddressResponseDto getAddressById(UUID addressId, User currentUser) {
-        Address address = findAddressAndCheckOwnership(addressId, currentUser);
+    public AddressResponseDto getAddressById(UUID addressId) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new EntityNotFoundException("Endereço com ID " + addressId + " não encontrado."));
         return new AddressResponseDto(address);
     }
 

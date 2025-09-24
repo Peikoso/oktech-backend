@@ -20,7 +20,7 @@ public interface AddressService {
 
     AddressResponseDto createAddress(AddressCreateRequestDto createDto, User currentUser);
 
-    AddressResponseDto getAddressById(UUID addressId, User currentUser);
+    AddressResponseDto getAddressById(UUID addressId);
 
     Address getAddressEntityById(UUID addressId, User currentUser);
 
