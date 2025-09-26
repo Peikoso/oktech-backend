@@ -1,6 +1,9 @@
-package com.oktech.boasaude.entity;
+package com.oktech.boasaude;
 
 import com.oktech.boasaude.dto.AddressCreateRequestDto;
+import com.oktech.boasaude.entity.Address;
+import com.oktech.boasaude.entity.User;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,7 +16,11 @@ class AddressUnitTest {
             "Rua Exemplo", "Salvador", "BA", "Apto 1", "40110150"
         );
 
-        Address address = new Address(dto);
+    User user = new User();
+    user.setName("João");
+    user.setEmail("joao@example.com");
+
+    Address address = new Address(dto, user);
 
         assertEquals("Rua Exemplo", address.getStreet());
         assertEquals("Salvador", address.getCity());
